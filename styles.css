@@ -1,0 +1,216 @@
+body {
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 0;
+    background-color: #d0d0d0; /* Leicht graues Hintergrund für retro Look */
+    color: #000;
+    overflow: hidden; /* Verhindert Scrollen bei Zoom */
+}
+
+#loader-wrapper {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: #333; /* Dunkler Hintergrund für Loader */
+    color: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+#loader {
+    width: 0;
+    height: 20px;
+    background-color: #0f0; /* Neon-Grün für Loader */
+    border: 2px solid #0a0; /* Dunkleres Grün für den Rand */
+    border-radius: 10px;
+    transition: width 0.5s linear;
+}
+
+#loader-percentage {
+    margin-top: 15px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#content {
+    display: block;
+    padding: 20px;
+    border: 2px solid #000;
+    background-color: #fff;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    margin: 20px;
+    position: relative; /* Relativ positionieren für korrekte Skalierung */
+    transition: transform 0.3s ease, filter 0.3s ease;
+    transform-origin: center; /* Zentriert das Herauszoomen */
+}
+
+#content.zoomed-out {
+    transform: scale(0.8);
+    filter: blur(2px); /* Optionaler Unschärfeeffekt */
+}
+
+table {
+    width: 100%; /* Tabelle nimmt 100% der Breite des Containers ein */
+    margin: 0 auto;
+    border: 2px solid #000;
+    border-collapse: collapse;
+    background-color: #f0f0f0;
+}
+
+th, td {
+    border: 1px solid #000;
+    padding: 8px; /* Etwas kleineres Padding für den retro Look */
+    text-align: center;
+    background-color: #e0e0e0;
+}
+
+th {
+    background-color: #ffcc00;
+    color: #000;
+    font-weight: bold;
+}
+
+td.default {
+    background-color: #fff;
+}
+
+td.green-cell {
+    background-color: #008000; /* Dunkelgrün für bessere Retro-Optik */
+    color: #fff; /* Weißer Text */
+}
+
+td.red-cell {
+    background-color: #c00; /* Dunkelrot für bessere Retro-Optik */
+    color: #fff; /* Weißer Text */
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 16px;
+    border: 2px solid #000;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    color: #000;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+button:hover {
+    background-color: #ffcc00; /* Retro-gelbes Highlight */
+    color: #000;
+}
+
+#greenOutlineButton {
+    border-color: #008000; /* Dunkelgrün */
+}
+
+#redCrossButton {
+    border-color: #c00; /* Dunkelrot */
+}
+
+#menuButton {
+    display = 'block';
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px;
+    border-radius: 50%;
+    background-color: #ffcc00;
+    color: #000;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 100;
+    border: 2px solid #000;
+}
+
+#menuButton:hover {
+    background-color: #ffff00; /* Helleres Gelb beim Hover */
+}
+
+#sideMenu {
+    position: fixed; /* Fixed Positionierung für das Menü */
+    top: 0;
+    right: -33%;
+    width: 33%;
+    height: 100%;
+    background-color: #000;
+    color: #fff;
+    padding: 20px;
+    box-shadow: -5px 0 10px rgba(0,0,0,0.5);
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    border: 2px solid #fff;
+    z-index: 2; /* Menü über dem Inhalt anzeigen */
+}
+
+#sideMenu.open {
+    right: 0;
+}
+
+/*-Submenu*/
+.create-modul-menu-text, .create-module-menu-module-text {
+    flex: 1; /* Nimmt den verfügbaren Platz ein */
+}
+
+.create-module-menu-module-text[contenteditable="true"]:focus {
+    outline: none; /* Entfernt den Fokusrahmen */
+    border: 1px solid #ddd; /* Optional: Visueller Hinweis, dass es bearbeitbar ist */
+}
+
+.add-subitem-btn, .remove-item-btn {
+    margin-left: 5px; /* Abstand zwischen den Buttons */
+}
+
+.button-container {
+    display: flex; /* Verwendet Flexbox für die Anordnung der Buttons */
+    justify-content: flex-end; /* Positioniert die Buttons am rechten Rand des Containers */
+    gap: 10px; /* Optional: Abstand zwischen den Buttons */
+    padding: 5px; /* Optional: Abstand zum Rand des Containers */
+}
+
+.load-original-plan,
+.berechne-alle-Kombinationen {
+    /* Falls spezifische Stile für die Buttons erforderlich sind, können sie hier hinzugefügt werden */
+}
+
+.submenu {
+    margin-left: 20px; /* Einrückung vom Menü */
+    border-top: 1px solid #ddd; /* Optional: Trennlinie oberhalb des Submenus */
+    padding-top: 5px; /* Abstand zwischen dem Trennstrich und dem Inhalt des Submenus */
+}
+
+/*-Subsubmenu Table*/
+.subsubmenu {
+    margin-left: 20px; /* Einrückung vom Menü */
+    border-top: 1px solid #ddd; /* Optional: Trennlinie oberhalb des Submenus */
+    padding-top: 5px; /* Abstand zwischen dem Trennstrich und dem Inhalt des Submenus */
+}
+
+.subsubmenu-item-table {
+    width: auto; /* Automatische Größe basierend auf Inhalt */
+    border-collapse: collapse;
+    margin-top: 10px; /* Abstand zum oberen Inhalt */
+}
+
+.subsubmenu-item-table td {
+    border: 1px solid #ddd;
+    padding: 5px; /* Kleinere Padding für kleinere Zellen */
+    text-align: left;
+    cursor: pointer; /* Cursor zeigt auf klickbare Zellen */
+    background-color: #e0e0e0; /* Hellgrau für Zellen */
+}
+
+.subsubmenu-item-table .gap {
+    width: 10px; /* Kleinere Lücke */
+}
+
+.subsubmenu-item-table .marked {
+    background-color: #ff0; /* Gelb für markierte Zellen */
+}

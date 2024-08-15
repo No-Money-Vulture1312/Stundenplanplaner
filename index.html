@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Screen Example</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div id="loader-wrapper">
+        <div id="loader"></div>
+        <div id="loader-percentage">0%</div>
+    </div>
+
+    <div id="content">
+        <h1>Welcome to the Main Content</h1>
+        <label id="Number-of-Plans-Display">0</label>
+        <button id="Load-Next-Table-Button">Next</button>
+        <button id="Load-Filtered-Plans">Load filtered Plans</button>
+        <button id="greenOutlineButton">Grüner Umriss</button>
+        <button id="redCrossButton">Rotes Kreuz</button>
+        <table id="planTable">
+            <thead>
+                <tr>
+                    <th>Zeit</th>
+                    <th>Montag</th>
+                    <th>Dienstag</th>
+                    <th>Mittwoch</th>
+                    <th>Donnerstag</th>
+                    <th>Freitag</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>7</td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                </tr>
+                <tr>
+                    <td>13</td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                </tr>
+                <tr>
+                    <td>15</td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                </tr>
+                <tr>
+                    <td>17</td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                    <td class="default"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button id="menuButton">≡</button>
+    <div id="sideMenu">
+        <div class="button-container">
+          <button class="load-original-plan">Load Original Plan</button>
+          <button class="berechne-Kombinationen">Berechne Kombinationen</button>
+        </div>
+
+        <div class="moduleMenu">
+            <span class="create-modul-menu-text">Module</span>
+            <button class="add-item-btn">+</button>
+            <div id="modules_submenu", class="submenu"></div>
+        </div>
+        <div class="menu-item">
+            Menü 2
+            <button class="add-item-btn">+</button>
+            <div class="submenu"></div>
+        </div>
+        <div class="menu-item">
+            Menü 3
+            <button class="add-item-btn">+</button>
+            <div class="submenu"></div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
