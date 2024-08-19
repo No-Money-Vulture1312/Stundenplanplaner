@@ -1,7 +1,12 @@
 let currentCursorColor = ''; // Variable für die aktuelle Cursor-Farbe
 const scrollThreshold = 100;
+let cellOptionsMenuVisible = false;
+let cellOptionsMenuTimeout;
+
+window.globalActiveTimes = [];
 
 document.addEventListener('DOMContentLoaded', function() {
+
     function createShootingStar() {
         const star = document.createElement('div');
         star.classList.add('shooting-star');
@@ -11,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const startY = Math.random() * window.innerHeight;
 
         // Zufällige Dauer der Animation
-        const duration = Math.random() * 30 + 1; // Dauer zwischen 10 und 30 Sekunden
+        const duration = Math.random() * 20 + 1; // Dauer zwischen 10 und 30 Sekunden
 
         // Zufälliger Winkel für die Bewegung
         const angle = Math.random() * 360;
@@ -31,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Erzeugt alle 500 Millisekunden eine neue Sternschnuppe
-    setInterval(createShootingStar, 100);
+    setInterval(createShootingStar, 1000);
 
 
     const filterButton = document.getElementById('filterButton');
@@ -163,13 +168,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const all_Stundenplan_Tables = document.querySelectorAll('#Stundenplan_Tables-wrapper .StundenplanTable');
 
     all_Stundenplan_Tables[0].querySelectorAll('td').forEach(cell => {
-          cell.addEventListener('click', handleTableCellClick);
+        cell.addEventListener('click', handleTableCellClick);
+        cell.addEventListener('mouseleave', startMenuTimeout);
     });
     all_Stundenplan_Tables[1].querySelectorAll('td').forEach(cell => {
         cell.addEventListener('click', handleTableCellClick);
+        cell.addEventListener('mouseleave', startMenuTimeout);
     });
     all_Stundenplan_Tables[2].querySelectorAll('td').forEach(cell => {
         cell.addEventListener('click', handleTableCellClick);
+        cell.addEventListener('mouseleave', startMenuTimeout);
     });
 
     document.addEventListener('keydown', handleKeyPress);
@@ -196,14 +204,21 @@ document.addEventListener('DOMContentLoaded', function() {
       saveOriginalActiveCells();
       calculateTotalNumber();
 
-      let TotalNumberlabel = document.getElementById("Number-of-Plans-Display");
-      TotalNumberlabel.innerText = `${window.globalNumberOfSavedCombinations}`;
-
       createStartingTables();
 
       // close menu
       openMenu();
     });
+
+    const cellOptionsMenu = document.getElementById('cellOptionsMenu');
+    cellOptionsMenu.addEventListener('mouseleave', () => {
+        startMenuTimeout();
+    });
+    
+    cellOptionsMenu.addEventListener('mouseenter', () => {
+        clearTimeout(cellOptionsMenuTimeout);
+    });
+
 });
 
 function createStartingTables() {
@@ -296,6 +311,9 @@ function calculateTotalNumber() {
 
     // Nachricht an den Server senden
     console.log(`${totalCombinations} valid combinations found. Saved`);
+
+    let TotalNumberlabel = document.getElementById("Number-of-Plans-Display");
+    TotalNumberlabel.innerText = `${window.globalNumberOfSavedCombinations}`;
 }
 
 function findNextCombination(startCombination = null) {
@@ -758,12 +776,16 @@ function filterWithColour() {
 
     // get all red states später auch die grünen
     let redCells = [];
+    let greenCells = [];
     for (let counter=0; counter<cellStates.length; counter++) {
       // red
       if (cellStates[counter] == -1) {
         redCells.push(counter)
       }
-      //green
+      //green -> brauchen wir dasüberhaupt?
+      if (cellStates[counter] == 1) {
+        greenCells.push(counter)
+      }
     }
 
     const filteredLists = lists.map(sublist =>
@@ -773,9 +795,6 @@ function filterWithColour() {
     window.globalActiveTimes = filteredLists;
 
     calculateTotalNumber();
-
-    let TotalNumberlabel = document.getElementById("Number-of-Plans-Display");
-    TotalNumberlabel.innerText = `${window.globalNumberOfSavedCombinations}`;
 
     createStartingTables();
 
@@ -788,10 +807,155 @@ function setCursorColor(color) {
 }
 
 function handleTableCellClick(event) {
+    if (currentCursorColor == 'green' || currentCursorColor == 'red') {
+        handleColouredTableCellClick(event);
+        return;
+    }
+
     const target = event.currentTarget;
 
-    col = target.cellIndex;
-    row = target.parentNode.rowIndex;
+    let col = target.cellIndex;
+    let row = target.parentNode.rowIndex;
+    let table = target.parentElement.parentElement.parentElement;
+    let cell = table.rows[row].cells[col];
+
+    let allTableCells = table.querySelectorAll('td');
+
+    clearTimeout(cellOptionsMenuTimeout);
+
+    const cellOptionsMenu = document.getElementById('cellOptionsMenu');
+    const cellOptionsMenuHeight = cellOptionsMenu.offsetHeight;
+
+    const rect = cell.getBoundingClientRect();
+        
+    let top = rect.bottom;
+    if (window.innerHeight - rect.bottom < cellOptionsMenuHeight) {
+        top = rect.top - cellOptionsMenuHeight;
+    }
+
+    // hier machen wir das mit dem aussuchen
+    const ulElement = cellOptionsMenu.querySelector('ul');
+    ulElement.innerHTML = '';
+
+    const cellNumber = (col-1)*6 + row-1;
+    let possibleVeranstaltungen = ["-----"];  // "-----" ist immer zum nichts auswählen drin
+
+    const loadedData = window.globalSavedModulMeta;
+    const namesList = [];
+    for (const subject in loadedData) {
+        for (const category in loadedData[subject]) {
+            namesList.push(`${subject} - ${category}`);
+        }
+    }
+
+    const activeTimes = window.globalActiveTimes;
+
+    activeTimes.forEach((innerArray, index) => {
+        // Überprüfen, ob der Wert X im inneren Array vorkommt
+        if (innerArray.includes(cellNumber)) {
+            possibleVeranstaltungen.push(namesList[index]); // Wenn ja, den Index des äußeren Arrays speichern
+        }
+    });
+
+    for (let i=0; i<possibleVeranstaltungen.length; i++) {
+        // Ein neues <li>-Element erstellen
+        const newLi = document.createElement('li');
+        newLi.className = 'cellOptionsMenu-item';
+        newLi.textContent = possibleVeranstaltungen[i]; // Der Text für das neue <li>
+
+        // Das neue <li>-Element zum <ul> hinzufügen
+        ulElement.appendChild(newLi);
+    }
+    // hier endet das aussuchen
+
+    cellOptionsMenu.style.width = `${rect.width}px`;
+    cellOptionsMenu.style.height = `${rect.height*3}px`;
+
+    cellOptionsMenu.style.left = `${rect.left}px`;
+    cellOptionsMenu.style.top = `${top}px`;
+    cellOptionsMenu.classList.remove('hiddenCellOptionsMenu');
+    cellOptionsMenuVisible = true;
+
+    allTableCells.forEach(c => c.classList.remove('highlight'));
+    cell.classList.add('highlight');
+
+    document.querySelectorAll('.cellOptionsMenu-item').forEach(item => {
+        item.onclick = function() {
+            // Setzt die Farbe des Textes der Zelle auf die des ausgewählten Elements
+            cell.style.color = getComputedStyle(item).color;
+
+            // merken als grüner rand
+            const ret = entscheideungsTreffer(cellNumber, item.innerHTML);
+
+            if (ret) {
+                // Fügt die Splash-Animation hinzu
+
+                cell.classList.add('green-cell');
+                cell.classList.add('animate-optionMenuSplash');
+
+                calculateTotalNumber();
+
+                createStartingTables();
+
+                setTimeout(() => {
+                    cell.textContent = item.textContent;
+                    cell.classList.remove('animate-optionMenuSplash');
+                    cell.classList.add('animate-change');
+                    setTimeout(() => cell.classList.remove('animate-change'), 300);
+                }, 500);
+            }
+            
+
+            cellOptionsMenu.classList.add('hiddenCellOptionsMenu');
+            cellOptionsMenuVisible = false;
+        };
+    });
+}
+
+function startMenuTimeout(event) {
+    if (cellOptionsMenuVisible) {
+        cellOptionsMenuTimeout = setTimeout(() => {
+            cellOptionsMenu.classList.add('hidden');
+            cellOptionsMenuVisible = false;
+        }, 2000);
+    }
+}
+
+
+
+function entscheideungsTreffer(n, text) {
+    
+    function help(text) {
+        let counter = 0
+        const loadedData = window.globalSavedModulMeta;
+        for (const subject in loadedData) {
+            for (const category in loadedData[subject]) {
+                if (`${subject} - ${category}` == text) {
+                    return counter
+                }
+                counter++;
+            }
+        }
+        return -1;
+    }
+
+    if (text == "-----") {return false;}
+
+    const c = help(text);
+    if (c==-1) {console.log(`Das sollte eigentlich nicht passieren ${text} nicht als modul erkannt`); return false;}
+
+    window.globalActiveTimes[c] = [n];
+    console.log(window.globalActiveTimes[c]);
+
+    return true;
+}
+
+
+function handleColouredTableCellClick(event) {
+    const target = event.currentTarget;
+
+    let col = target.cellIndex;
+    let row = target.parentNode.rowIndex;
 
     if (col === 0) {
         return; // Keine Aktion für Zellen in der ersten Spalte
@@ -840,7 +1004,6 @@ function resetCursorColor() {
 }
 
 function getTableCellStates() {
-    console.log("Grüne Felder muss ich erst noch machen.");
     const cellStates = [];
     const all_Stundenplan_Tables = document.querySelectorAll('#Stundenplan_Tables-wrapper .StundenplanTable');
     const rows = Array.from(all_Stundenplan_Tables[0].querySelectorAll('tbody tr'));
