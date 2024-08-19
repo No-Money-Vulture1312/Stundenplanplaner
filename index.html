@@ -7,105 +7,260 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="loader-wrapper">
-        <div id="loader"></div>
-        <div id="loader-percentage">0%</div>
+    <div class="stars"></div>
+    <header>
+        <h1>Der planende Stundenplanplaner für den Plan für den geplanten Unistundenplan</h1>
+    </header>
+    <div id="menus">
+        <div class="totalMenu">
+            <div id="Number-of-Plans-Display">0</div>
+            <button id="Load-Filtered-Plans">Load filtered Plans</button>
+            <button id="filterButton">Filter</button>
+            <button id="menuButton">Menu</button>
+        </div>
+    </div>
+
+    <div id="settingsMenu">
+        <div id="settingsMenu-wrapper">
+            <button id="close-settingsMenu">Schließen</button>
+
+            <div class="button-container">
+            <button class="load-original-plan">Load Original Plan</button>
+            <button class="berechne-Kombinationen">Berechne Kombinationen</button>
+            </div>
+
+            <div class="moduleMenu">
+                <span class="create-modul-menu-text">Module</span>
+                <button class="add-item-btn">+</button>
+                <div id="modules_submenu", class="submenu"></div>
+            </div>
+            <div class="menu-item">
+                Menü 2
+                <button class="add-item-btn">+</button>
+                <div class="submenu"></div>
+            </div>
+            <div class="menu-item">
+                Menü 3
+                <button class="add-item-btn">+</button>
+                <div class="submenu"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="filterMenu" class="hidden">
+        <button id="greenOutlineButton">Grüner Umriss</button>
+        <button id="redCrossButton">Rotes Kreuz</button>
+        <p>Scrollbarer Inhalt...</p>
+        <p>Scrollbarer Inhalt...</p>
     </div>
 
     <div id="content">
-        <h1>Welcome to the Main Content</h1>
-        <label id="Number-of-Plans-Display">0</label>
-        <button id="Load-Next-Table-Button">Next</button>
-        <button id="Load-Filtered-Plans">Load filtered Plans</button>
-        <button id="greenOutlineButton">Grüner Umriss</button>
-        <button id="redCrossButton">Rotes Kreuz</button>
-        <table id="planTable">
-            <thead>
-                <tr>
-                    <th>Zeit</th>
-                    <th>Montag</th>
-                    <th>Dienstag</th>
-                    <th>Mittwoch</th>
-                    <th>Donnerstag</th>
-                    <th>Freitag</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>7</td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                </tr>
-                <tr>
-                    <td>9</td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                </tr>
-                <tr>
-                    <td>11</td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                </tr>
-                <tr>
-                    <td>13</td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                </tr>
-                <tr>
-                    <td>15</td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                </tr>
-                <tr>
-                    <td>17</td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                    <td class="default"></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+        <div id="Stundenplan_Tables_div">
+            <div id = "Stundenplan_Tables-wrapper">
+                <div class="StundenplanContainer">
+                    <div id="Stundenplan_Counter_1", class="Stundenplan_Counter">0</div>
+                    <table id="Stundenplantable_1" class="StundenplanTable">
+                            <thead>
+                                <tr>
+                                    <th>Zeit</th>
+                                    <th>Montag</th>
+                                    <th>Dienstag</th>
+                                    <th>Mittwoch</th>
+                                    <th>Donnerstag</th>
+                                    <th>Freitag</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>7</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>11</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>13</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>15</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>17</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                            </tbody>
+                    </table>
+                    <div class="stundenplan_Gab"></div>
+                </div>
 
-    <button id="menuButton">≡</button>
-    <div id="sideMenu">
-        <div class="button-container">
-          <button class="load-original-plan">Load Original Plan</button>
-          <button class="berechne-Kombinationen">Berechne Kombinationen</button>
-        </div>
+                <div class="StundenplanContainer">
+                    <div id="Stundenplan_Counter_2", class="Stundenplan_Counter">1</div>
+                    <table id="Stundenplantable_2" class="StundenplanTable">
+                            <thead>
+                                <tr>
+                                    <th>Zeit</th>
+                                    <th>Montag</th>
+                                    <th>Dienstag</th>
+                                    <th>Mittwoch</th>
+                                    <th>Donnerstag</th>
+                                    <th>Freitag</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>7</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>11</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>13</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>15</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>17</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                            </tbody>
+                    </table>
+                    <div class="stundenplan_Gab"></div>
+                </div>
 
-        <div class="moduleMenu">
-            <span class="create-modul-menu-text">Module</span>
-            <button class="add-item-btn">+</button>
-            <div id="modules_submenu", class="submenu"></div>
-        </div>
-        <div class="menu-item">
-            Menü 2
-            <button class="add-item-btn">+</button>
-            <div class="submenu"></div>
-        </div>
-        <div class="menu-item">
-            Menü 3
-            <button class="add-item-btn">+</button>
-            <div class="submenu"></div>
+                <div class="StundenplanContainer">
+                    <div id="Stundenplan_Counter_3", class="Stundenplan_Counter">2</div>
+                    <table id="Stundenplantable_3" class="StundenplanTable">
+                            <thead>
+                                <tr>
+                                    <th>Zeit</th>
+                                    <th>Montag</th>
+                                    <th>Dienstag</th>
+                                    <th>Mittwoch</th>
+                                    <th>Donnerstag</th>
+                                    <th>Freitag</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>7</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>11</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>13</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>15</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                                <tr>
+                                    <td>17</td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                    <td class="default"></td>
+                                </tr>
+                            </tbody>
+                    </table>
+                    <div class="stundenplan_Gab"></div>
+                </div>
+            </div>
         </div>
     </div>
+    
     <script src="main.js"></script>
 </body>
 </html>

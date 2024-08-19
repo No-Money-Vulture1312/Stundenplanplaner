@@ -1,216 +1,285 @@
+/* Animierter Hintergrund für den Weltraum-Look */
 body {
-    font-family: 'Courier New', Courier, monospace;
     margin: 0;
     padding: 0;
-    background-color: #d0d0d0; /* Leicht graues Hintergrund für retro Look */
-    color: #000;
-    overflow: hidden; /* Verhindert Scrollen bei Zoom */
+    background: linear-gradient(45deg, #000428, #004e92); /* Tiefe Weltraumfarben */
+    background-size: 400% 400%;
+    overflow: hidden;
+    animation: gradient 15s ease infinite; /* Animierter Hintergrund */
+    font-family: 'Press Start 2P', cursive; /* Pixelige Retro-Schriftart */
 }
 
-#loader-wrapper {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    background-color: #333; /* Dunkler Hintergrund für Loader */
-    color: #fff;
+/* Sternschnuppe-Animation */
+@keyframes shootingStar {
+    0% {
+        transform: translateX(0) translateY(0) rotate(-45deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100vw) translateY(100vh) rotate(-45deg);
+        opacity: 0;
+    }
+}
+
+.shooting-star {
     position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #fff;
+    animation: shootingStar linear infinite;
+    pointer-events: none;
+}
+
+/* Header-Stil */
+header {
+    background: #002b36; /* Dunkles Blau-Grün für Header */
+    color: #ffffff; /* Weißer Text */
+    padding: 1px 0; /* Noch kleinere Polsterung für einen schmaleren Header */
+    height: 70px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Schattierung für Tiefe */
+    font-size: 1em; /* Kleinere Schriftgröße */
+
+    box-sizing: border-box;
+    border-radius: 15px; /* Abgerundete Ecken */
+}
+
+/* Menü-Stil */
+.totalMenu {
+    display: flex;
+    justify-content: space-around;
+    background: #1a1a1a; /* Dunkelgrau für das Menü */
+    color: #fff;
+    padding: 2px 0;
+    height: 60px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Leichte Schattierung */
+
+    box-sizing: border-box;
+    border-radius: 15px; /* Abgerundete Ecken */
+}
+
+.totalMenu button {
+    background: #0a74da; /* Himmelblau für die Buttons */
+    border: 2px solid #0056b3; /* Dunkleres Blau für den Rand */
+    color: #fff;
+    padding: 2px 8px; /* Etwas kleinere Polsterung für die Buttons */
+    cursor: pointer;
+    border-radius: 5px; /* Abgerundete Ecken für einen weicheren Look */
+    transition: background 0.3s, transform 0.3s; /* Weiche Übergänge */
+}
+
+.totalMenu button:hover {
+    background: #0056b3; /* Dunkleres Blau beim Hover */
+    transform: scale(1.05); /* Leicht vergrößern beim Hover */
+}
+
+#Number-of-Plans-Display {
+    font-size: 1.5em; /* Größere Schriftgröße für bessere Lesbarkeit */
+    font-weight: bold; /* Fettgeschriebener Text */
+    color: #ffffff; /* Weißer Text */
+    background-color: #004e92; /* Hintergrundfarbe, die zu den Weltraumfarben passt */
+    padding: 10px 20px; /* Polsterung für mehr Raum um den Text */
+    border-radius: 10px; /* Abgerundete Ecken für ein moderneres Aussehen */
+    text-align: center; /* Zentrierter Text */
+    margin: 10px; /* Abstand zu umliegenden Elementen */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Schattierung für Tiefe */
+    width: fit-content; /* Breite passt sich dem Inhalt an */
+    display: inline-block; 
+}
+
+/* Filter- und Einstellungsmenü */
+#filterMenu {
+    background: #e0e0e0; /* Helles Grau für das Menü */
+    height: 250px;
+    overflow-y: scroll;
+    border-top: 2px solid #007bff; /* Hellblau für den Rand oben */
+    position: absolute;
+    top: 60px; /* Position unter dem Button */
+    left: calc(50% - 80px); /* Zentriert und etwas breiter als der Button */
+    width: 250px; /* Breite des Menüs */
+    display: none;
+    z-index: 10;
+    border-radius: 10px; /* Abgerundete Ecken */
+}
+
+#settingsMenu {
+    position: fixed;
     top: 0;
     left: 0;
+    width: 100vw; /* Volle Breite des Viewports */
+    height: 100vh; /* Volle Höhe des Viewports */
+    background: rgba(0, 0, 0, 0.7); /* Dunkler halbtransparenter Hintergrund */
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.5s ease;
     z-index: 1000;
-}
-
-#loader {
-    width: 0;
-    height: 20px;
-    background-color: #0f0; /* Neon-Grün für Loader */
-    border: 2px solid #0a0; /* Dunkleres Grün für den Rand */
-    border-radius: 10px;
-    transition: width 0.5s linear;
-}
-
-#loader-percentage {
-    margin-top: 15px;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-#content {
-    display: block;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding: 20px;
-    border: 2px solid #000;
-    background-color: #fff;
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
-    margin: 20px;
-    position: relative; /* Relativ positionieren für korrekte Skalierung */
-    transition: transform 0.3s ease, filter 0.3s ease;
-    transform-origin: center; /* Zentriert das Herauszoomen */
+    box-sizing: border-box;
+    border-radius: 15px; /* Abgerundete Ecken */
 }
 
-#content.zoomed-out {
-    transform: scale(0.8);
-    filter: blur(2px); /* Optionaler Unschärfeeffekt */
+#settingsMenu.show {
+    transform: translateY(0);
 }
 
-table {
-    width: 100%; /* Tabelle nimmt 100% der Breite des Containers ein */
-    margin: 0 auto;
-    border: 2px solid #000;
-    border-collapse: collapse;
-    background-color: #f0f0f0;
-}
-
-th, td {
-    border: 1px solid #000;
-    padding: 8px; /* Etwas kleineres Padding für den retro Look */
+#settingsMenu-wrapper {
+    width: 90%; /* Erhöht die Breite des Wrappers */
+    max-width: 1200px; /* Maximalbreite für größere Bildschirme */
+    max-height: 90vh; /* Begrenzung der maximalen Höhe des Wrappers */
+    box-sizing: border-box;
+    overflow-y: auto;
     text-align: center;
-    background-color: #e0e0e0;
+    padding: 20px;
+    border-radius: 10px;
+    background: #002b36; /* Dunkles Blau-Grün für den Wrapper */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Schattierung für Tiefe */
 }
 
-th {
-    background-color: #ffcc00;
-    color: #000;
-    font-weight: bold;
-}
-
-td.default {
-    background-color: #fff;
-}
-
-td.green-cell {
-    background-color: #008000; /* Dunkelgrün für bessere Retro-Optik */
-    color: #fff; /* Weißer Text */
-}
-
-td.red-cell {
-    background-color: #c00; /* Dunkelrot für bessere Retro-Optik */
-    color: #fff; /* Weißer Text */
-}
-
+/* Button-Stil */
 button {
     padding: 10px 20px;
     margin: 10px;
     font-size: 16px;
-    border: 2px solid #000;
-    border-radius: 5px;
-    background-color: #f0f0f0;
-    color: #000;
+    border: 2px solid #ff4500; /* Leuchtendes Orange für den Rand */
+    border-radius: 5px; /* Abgerundete Ecken für einen weicheren Look */
+    background-color: #ff6347; /* Tomatenrot für Buttons */
+    color: #fff;
     cursor: pointer;
-    font-family: 'Courier New', Courier, monospace;
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
 }
 
 button:hover {
-    background-color: #ffcc00; /* Retro-gelbes Highlight */
+    background-color: #ff4500; /* Helleres Orange beim Hover */
     color: #000;
+    transform: scale(1.05); /* Leicht vergrößern beim Hover */
 }
 
-#greenOutlineButton {
-    border-color: #008000; /* Dunkelgrün */
-}
-
-#redCrossButton {
-    border-color: #c00; /* Dunkelrot */
-}
-
-#menuButton {
-    display = 'block';
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    padding: 15px;
-    border-radius: 50%;
-    background-color: #ffcc00;
-    color: #000;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 100;
-    border: 2px solid #000;
-}
-
-#menuButton:hover {
-    background-color: #ffff00; /* Helleres Gelb beim Hover */
-}
-
-#sideMenu {
-    position: fixed; /* Fixed Positionierung für das Menü */
-    top: 0;
-    right: -33%;
-    width: 33%;
-    height: 100%;
-    background-color: #000;
-    color: #fff;
-    padding: 20px;
-    box-shadow: -5px 0 10px rgba(0,0,0,0.5);
-    transition: right 0.3s ease;
+/* Inhalt und Tabelle */
+#Stundenplan_Tables_div {
+    display: flex;
+    position: relative;
+    height: calc(100vh - 100px); /* Höhe des sichtbaren Bereichs anpassen */
     overflow-y: auto;
-    border: 2px solid #fff;
-    z-index: 2; /* Menü über dem Inhalt anzeigen */
+    background-color: #003f6c; /* Dunkles Blau für den Hintergrund */
+    align-items: center;
+    flex-direction: column;
+    border-radius: 15px; /* Abgerundete Ecken */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Schattierung für Tiefe */
+    width: calc(100% - 40px); /* Breite des Containers anpassen */
+    margin: 20px auto; /* Zentriert und gibt einen Abstand zu den Rändern */
 }
 
-#sideMenu.open {
-    right: 0;
+#Stundenplan_Tables-wrapper {
+    position: relative;
+    width: 100%; /* Vollständige Breite des Containers */
+    max-width: 1200px; /* Maximalbreite für größere Bildschirme */
+    border-radius: 10px; /* Abgerundete Ecken */
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-/*-Submenu*/
-.create-modul-menu-text, .create-module-menu-module-text {
-    flex: 1; /* Nimmt den verfügbaren Platz ein */
+.StundenplanContainer {
+    display: flex; /* Flexbox aktivieren */
+    flex-direction: column; /* Inhalte untereinander anordnen */
+    align-items: center; /* Horizontale Zentrierung */
+    justify-content: center; /* Vertikale Zentrierung */
+    height: 90vh; /* Höhe des Containers (90% der Viewport-Höhe) */
+    width: 100%; /* Volle Breite des Containers */
+    padding: 20px; /* Innenabstand */
 }
 
-.create-module-menu-module-text[contenteditable="true"]:focus {
-    outline: none; /* Entfernt den Fokusrahmen */
-    border: 1px solid #ddd; /* Optional: Visueller Hinweis, dass es bearbeitbar ist */
+.Stundenplan_Counter {
+    font-size: 1.5em; /* Größere Schriftgröße für bessere Lesbarkeit */
+    font-weight: bold; /* Fettgeschriebener Text */
+    color: #ffffff; /* Weißer Text */
+    background-color: #004e92; /* Hintergrundfarbe, die zu den Weltraumfarben passt */
+    padding: 10px 20px; /* Polsterung für mehr Raum um den Text */
+    border-radius: 10px; /* Abgerundete Ecken für ein moderneres Aussehen */
+    text-align: center; /* Zentrierter Text */
+    margin: 10px; /* Abstand zu umliegenden Elementen */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Schattierung für Tiefe */
+    width: fit-content; /* Breite passt sich dem Inhalt an */
+    display: inline-block; /* Damit sich das Element an den Inhalt anpasst */
 }
 
-.add-subitem-btn, .remove-item-btn {
-    margin-left: 5px; /* Abstand zwischen den Buttons */
+.stundenplan_Gab {
+    height: 500px; /* Höhe der Lücke, kann angepasst werden */
+    width: 100%; /* Breite der Lücke, passt sich dem Container an */
+    background-color: transparent; /* Hintergrundfarbe der Lücke, transparent für keinen sichtbaren Hintergrund */
 }
 
-.button-container {
-    display: flex; /* Verwendet Flexbox für die Anordnung der Buttons */
-    justify-content: flex-end; /* Positioniert die Buttons am rechten Rand des Containers */
-    gap: 10px; /* Optional: Abstand zwischen den Buttons */
-    padding: 5px; /* Optional: Abstand zum Rand des Containers */
+table {
+    width: 100%; /* Tabelle nimmt 100% der Breite des Containers ein */
+    height: auto; /* Höhe anpassen */
+    margin: 0 auto;
+    border: 4px solid #1e90ff; /* Leuchtendes Blau für den Rand */
+    border-collapse: collapse;
+    background-color: #1c1c8d; /* Dunkles Blau mit einem Hauch von Lila */
 }
 
-.load-original-plan,
-.berechne-alle-Kombinationen {
-    /* Falls spezifische Stile für die Buttons erforderlich sind, können sie hier hinzugefügt werden */
+th, td {
+    border: 2px solid #1e90ff; /* Leuchtendes Blau für die Zellränder */
+    padding: 12px;
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
 }
 
-.submenu {
-    margin-left: 20px; /* Einrückung vom Menü */
-    border-top: 1px solid #ddd; /* Optional: Trennlinie oberhalb des Submenus */
-    padding-top: 5px; /* Abstand zwischen dem Trennstrich und dem Inhalt des Submenus */
+th {
+    background-color: #00bfff; /* Helles Blau für Header-Zellen */
+    color: #fff;
+    font-weight: bold;
 }
 
-/*-Subsubmenu Table*/
+td.default {
+    background-color: #003366; /* Sehr dunkles Blau für Standard-Zellen */
+    color: #e0e0e0;
+}
+
+td.green-cell {
+    background-color: #7fff00; /* Neon-Grün für Zellen */
+    color: #000;
+}
+
+td.red-cell {
+    background-color: #ff6347; /* Tomatenrot für Zellen */
+    color: #fff;
+}
+
+/* Submenu-Stil */
 .subsubmenu {
-    margin-left: 20px; /* Einrückung vom Menü */
-    border-top: 1px solid #ddd; /* Optional: Trennlinie oberhalb des Submenus */
-    padding-top: 5px; /* Abstand zwischen dem Trennstrich und dem Inhalt des Submenus */
+    margin-left: 20px;
+    border-top: 2px solid #ff4500; /* Neon-oranger Trennstrich */
+    padding-top: 10px;
+    background: #003f6c; /* Dunkles Blau für Hintergrund */
+    border-radius: 10px; /* Abgerundete Ecken */
 }
 
 .subsubmenu-item-table {
-    width: auto; /* Automatische Größe basierend auf Inhalt */
+    width: auto;
     border-collapse: collapse;
-    margin-top: 10px; /* Abstand zum oberen Inhalt */
+    margin-top: 10px;
 }
 
 .subsubmenu-item-table td {
-    border: 1px solid #ddd;
-    padding: 5px; /* Kleinere Padding für kleinere Zellen */
+    border: 2px solid #ff4500; /* Neon-oranger Rand für Zellen */
+    padding: 5px;
     text-align: left;
-    cursor: pointer; /* Cursor zeigt auf klickbare Zellen */
-    background-color: #e0e0e0; /* Hellgrau für Zellen */
+    cursor: pointer;
+    background-color: #222; /* Dunkelgrau für Zellen */
 }
 
 .subsubmenu-item-table .gap {
-    width: 10px; /* Kleinere Lücke */
+    width: 10px;
 }
 
 .subsubmenu-item-table .marked {
-    background-color: #ff0; /* Gelb für markierte Zellen */
+    background-color: #ffff00; /* Neon-Gelb für markierte Zellen */
 }

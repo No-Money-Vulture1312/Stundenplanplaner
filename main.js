@@ -1,12 +1,155 @@
 let currentCursorColor = ''; // Variable für die aktuelle Cursor-Farbe
+const scrollThreshold = 100;
 
 document.addEventListener('DOMContentLoaded', function() {
+    function createShootingStar() {
+        const star = document.createElement('div');
+        star.classList.add('shooting-star');
 
-     var nextTable = document.getElementById('Load-Next-Table-Button');
-     nextTable.addEventListener('click', loadNextTable);
+        // Zufällige Position auf dem Bildschirm
+        const startX = Math.random() * window.innerWidth;
+        const startY = Math.random() * window.innerHeight;
 
-     const menuButton = document.getElementById('menuButton');
-     menuButton.addEventListener('click', openMenu);
+        // Zufällige Dauer der Animation
+        const duration = Math.random() * 30 + 1; // Dauer zwischen 10 und 30 Sekunden
+
+        // Zufälliger Winkel für die Bewegung
+        const angle = Math.random() * 360;
+
+        // Stil für die Sternschnuppe festlegen
+        star.style.left = `${startX}px`;
+        star.style.top = `${startY}px`;
+        star.style.animationDuration = `${duration}s`;
+        star.style.transform = `rotate(${angle}deg)`;
+
+        document.body.appendChild(star);
+
+        // Entfernen Sie die Sternschnuppe, nachdem die Animation abgeschlossen ist
+        star.addEventListener('animationend', () => {
+            star.remove();
+        });
+    }
+
+    // Erzeugt alle 500 Millisekunden eine neue Sternschnuppe
+    setInterval(createShootingStar, 100);
+
+
+    const filterButton = document.getElementById('filterButton');
+    const settingsButton = document.getElementById('menuButton');
+    const filterMenu = document.getElementById('filterMenu');
+    const settingsMenu = document.getElementById('settingsMenu');
+    const closesettingsMenuButton = document.getElementById('close-settingsMenu');
+    let settingsMenuVisible = false;
+
+    let openTimeoutId;
+    let closeTimeoutId;
+
+    // Funktion zum Öffnen des Menüs nach 0,5 Sekunden
+    function startOpenTimeout() {
+        openTimeoutId = setTimeout(() => {
+            filterMenu.style.display = 'block';
+        }, 100);
+    }
+
+    // Funktion zum Schließen des Menüs nach 1 Sekunde Inaktivität
+    function startCloseTimeout() {
+        closeTimeoutId = setTimeout(() => {
+            filterMenu.style.display = 'none';
+        }, 300);
+    }
+
+    // Event-Listener für den Button
+    filterButton.addEventListener('mouseover', () => {
+        clearTimeout(closeTimeoutId);
+        startOpenTimeout();
+    });
+
+    filterButton.addEventListener('mouseout', () => {
+        clearTimeout(openTimeoutId);
+        startCloseTimeout();
+    });
+
+    filterMenu.addEventListener('mouseover', () => {
+        clearTimeout(closeTimeoutId);
+        clearTimeout(openTimeoutId);
+    });
+
+    filterMenu.addEventListener('mouseout', () => {
+        startCloseTimeout();
+    });
+
+
+    // Button 4 - Sliding Menu
+    settingsButton.addEventListener('click', openMenu);
+
+    // Schließen Button im Sliding Menu
+    closesettingsMenuButton.addEventListener('click', () => {
+        settingsMenu.classList.remove('show');
+        settingsMenuVisible = false;
+    });
+    
+    // hier beginnt das neue
+
+    const Stundenplan_Tables_div = document.querySelector("#Stundenplan_Tables_div");
+    const Stundenplan_Tables_wrapper = Stundenplan_Tables_div.querySelector("#Stundenplan_Tables-wrapper");
+    
+    
+    let isTicking = false;
+
+    Stundenplan_Tables_div.addEventListener('scroll', () => {
+        if (!isTicking) {
+            window.requestAnimationFrame(() => {
+                const totalHeight = Stundenplan_Tables_div.scrollHeight;
+                const viewHeight = Stundenplan_Tables_div.clientHeight;
+                const scrollTop = Stundenplan_Tables_div.scrollTop;
+
+                const firstElement = Stundenplan_Tables_wrapper.firstElementChild;
+                const lastElement = Stundenplan_Tables_wrapper.lastElementChild;
+                const lastLabelNumberStundenplan = lastElement.querySelector(".Stundenplan_Counter");
+                const firstLabelNumberStundenplan = firstElement.querySelector(".Stundenplan_Counter");
+                let newCounter;
+
+                if ((scrollTop + viewHeight + scrollThreshold >= totalHeight) && (parseInt(lastLabelNumberStundenplan.innerText) < parseInt(window.globalNumberOfSavedCombinations)) && (parseInt(window.globalNumberOfSavedCombinations) != 0)) {
+                    console.log(window.globalNumberOfSavedCombinations)
+                    newCounter = parseInt(lastLabelNumberStundenplan.innerText, 10) + 1;
+                    firstLabelNumberStundenplan.innerText = newCounter.toString();
+
+                    if (window.globalMainCombination) {
+                        console.log("load next table");
+                        const nextComb = findNextCombination(window.globalMainCombination);
+                        updateMainTable(findNextCombination(nextComb), firstElement.querySelector(".StundenplanTable"));
+                        window.globalMainCombination = nextComb;
+                    }
+
+
+                    Stundenplan_Tables_wrapper.appendChild(firstElement);
+                } 
+                
+                else if ((scrollTop <= scrollThreshold) && (parseInt(firstLabelNumberStundenplan.innerText, 10) > 0)) {
+                    newCounter = parseInt(firstLabelNumberStundenplan.innerText, 10) - 1;
+                    lastLabelNumberStundenplan.innerText = newCounter.toString();
+
+                    if (window.globalMainCombination) {
+                        console.log("load previous table");
+                        const lastComb = findPreviousCombination(window.globalMainCombination);
+                        updateMainTable(findPreviousCombination(lastComb), lastElement.querySelector(".StundenplanTable"));
+                        window.globalMainCombination = lastComb;
+                    }
+
+                    Stundenplan_Tables_wrapper.prepend(lastElement);
+                }
+
+                isTicking = false;
+            });
+
+            isTicking = true;
+        }
+    });
+
+
+    // hier endet das neue
+
+     
 
      // Farbauswahl-Buttons
      const greenOutlineButton = document.getElementById('greenOutlineButton');
@@ -16,9 +159,18 @@ document.addEventListener('DOMContentLoaded', function() {
      redCrossButton.addEventListener('click', () => setCursorColor('red'));
 
      // Tabellenzellen
-     document.querySelectorAll('#planTable td').forEach(cell => {
+    console.log("Auf Tabellen klicken muss noch angepasst werdne")
+    const all_Stundenplan_Tables = document.querySelectorAll('#Stundenplan_Tables-wrapper .StundenplanTable');
+
+    all_Stundenplan_Tables[0].querySelectorAll('td').forEach(cell => {
           cell.addEventListener('click', handleTableCellClick);
-     });
+    });
+    all_Stundenplan_Tables[1].querySelectorAll('td').forEach(cell => {
+        cell.addEventListener('click', handleTableCellClick);
+    });
+    all_Stundenplan_Tables[2].querySelectorAll('td').forEach(cell => {
+        cell.addEventListener('click', handleTableCellClick);
+    });
 
     document.addEventListener('keydown', handleKeyPress);
 
@@ -26,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
     filterWithColourButton.addEventListener('click', filterWithColour)
 
     // Submenu
-    document.querySelectorAll('#sideMenu .add-item-btn').forEach(button => {
+    document.querySelectorAll('#settingsMenu .add-item-btn').forEach(button => {
         button.addEventListener('click', function(event) {
             event.stopPropagation();
             addSubMenuItem(event.target.nextElementSibling);
@@ -45,18 +197,37 @@ document.addEventListener('DOMContentLoaded', function() {
       calculateTotalNumber();
 
       let TotalNumberlabel = document.getElementById("Number-of-Plans-Display");
-      TotalNumberlabel.innerText = `${loadData('Number of saved Combinations')}`;
+      TotalNumberlabel.innerText = `${window.globalNumberOfSavedCombinations}`;
 
-      const startingCombination = findNextCombination();
-      updateMainTable(startingCombination);
+      createStartingTables();
 
       // close menu
       openMenu();
     });
 });
 
+function createStartingTables() {
+    const all_Stundenplan_Tables = document.querySelectorAll('#Stundenplan_Tables-wrapper .StundenplanTable');
+
+    let startingCombination = findNextCombination();
+    updateMainTable(startingCombination, all_Stundenplan_Tables[0]);
+    startingCombination = findNextCombination(startingCombination);
+    updateMainTable(startingCombination, all_Stundenplan_Tables[1]);
+
+    window.globalMainCombination = startingCombination;
+
+    startingCombination = findNextCombination(startingCombination);
+    updateMainTable(startingCombination, all_Stundenplan_Tables[2]);
+
+    // change labels
+    const labels = document.querySelectorAll('#Stundenplan_Tables-wrapper .Stundenplan_Counter');
+    labels[0].innerText = 0;
+    labels[1].innerText = 1;
+    labels[2].innerText = 2;
+}
+
 function saveOriginalActiveCells() {
-  const loadedData = loadData('Saved Modules Meta');
+  const loadedData = window.globalSavedModulMeta;
   let timesList = convertDictionaryToNumbersList(loadedData);
 
   // jetzt gucken und eliminieren wir alle, die nur einmal da basierend
@@ -68,20 +239,15 @@ function saveOriginalActiveCells() {
       sublist.length > 1 ? sublist.filter(element => !singleElements.includes(element)) : sublist
   );
 
-  localStorage.setItem("Active Times", JSON.stringify(filteredList));
+  window.globalActiveTimes = filteredList;
 
-  sendMessageToServer("Active Cells saved succsesfuly")
+  console.log("Active Cells saved succsesfuly")
 }
 
-function loadNextTable() {
-  const combinationNow = loadData("mainCombination");
-  const nextCombination = findNextCombination(combinationNow);
-  updateMainTable(nextCombination);
-}
 
-function updateMainTable(combination) {
+function updateMainTable(combination, table) {
   // hier laden ir erstmal eine Liste an veranstaltungen, damit wir auch wissen as die combination bedeutet
-  const loadedData = loadData('Saved Modules Meta');
+  const loadedData = window.globalSavedModulMeta;
   const namesList = [];
   for (const subject in loadedData) {
       for (const category in loadedData[subject]) {
@@ -90,7 +256,6 @@ function updateMainTable(combination) {
   }
 
   // einmal die Tabelle leer machen
-  let table = document.getElementById('planTable');
   for (let r=1; r<=5; r++) {
     for (let c=1; c<=6; c++) {
       let cell = table.rows[c].cells[r];
@@ -100,13 +265,12 @@ function updateMainTable(combination) {
 
   for (let counter = 0; counter < combination.length; counter++) {
       let cell = [Math.floor(combination[counter]/6), combination[counter]%6];
-      updateMainTableCell(cell, namesList[counter]);
+      updateMainTableCell(cell, table, namesList[counter]);
   }
 }
 
-function updateMainTableCell(cell, name='') {
+function updateMainTableCell(cell, table, name='') {
   // Tabelle finden
-  let table = document.getElementById('planTable');
   let row = cell[1]+1;
   let col = cell[0]+1;
 
@@ -122,20 +286,20 @@ function updateMainTableCell(cell, name='') {
 // die fnkt kann ich später löschen
 function calculateTotalNumber() {
     // Laden der gespeicherten Moduldaten (dies wird später für etwas anderes wichtig sein)
-    const timesList = loadData('Active Times');
+    const timesList = window.globalActiveTimes;
 
     // Berechnen aller möglichen Kombinationen
     let totalCombinations = calculateAllPossibleCombinations_help(timesList);
 
     // Speichern der Anzahl der gefundenen Kombinationen im lokalen Speicher
-    localStorage.setItem("Number of saved Combinations", JSON.stringify(totalCombinations));
+    window.globalNumberOfSavedCombinations = totalCombinations
 
     // Nachricht an den Server senden
-    sendMessageToServer(`${totalCombinations} valid combinations found. Saved`);
+    console.log(`${totalCombinations} valid combinations found. Saved`);
 }
 
 function findNextCombination(startCombination = null) {
-    const lists = loadData('Active Times');
+    const lists = window.globalActiveTimes;
     // Hilfsfunktion, um zu prüfen, ob eine Kombination keine doppelten Zahlen enthält
     function isValidCombination(combination) {
         return new Set(combination).size === combination.length;
@@ -179,13 +343,72 @@ function findNextCombination(startCombination = null) {
         }
     } while (!isValidCombination(combination));
 
-    //vermutlich temporär
-    localStorage.setItem("mainCombination", JSON.stringify(combination));
 
-    sendMessageToServer("Load Table succsesfully");
+    console.log("Load Table succsesfully");
 
     return combination;
 }
+
+function findPreviousCombination(startCombination = null) {
+    const lists = window.globalActiveTimes;
+    
+    // Hilfsfunktion, um zu prüfen, ob eine Kombination keine doppelten Zahlen enthält
+    function isValidCombination(combination) {
+        return new Set(combination).size === combination.length;
+    }
+
+    // Funktion zum Verringern der Kombination
+    function decrementCombination(combination, indices) {
+        let borrow = 1;
+        for (let i = lists.length - 1; i >= 0; i--) {
+            if (borrow === 0) break;
+
+            indices[i] -= borrow;
+            borrow = 0;
+
+            if (indices[i] < 0) {
+                indices[i] = lists[i].length - 1;
+                borrow = 1;
+            }
+        }
+    }
+
+    // Initialisierung der Startkombination und Indizes
+    let indices = startCombination
+        ? startCombination.map((num, i) => lists[i].indexOf(num))
+        : new Array(lists.length).fill(lists[0].length - 1);
+
+    let combination = indices.map((index, i) => lists[i][index]);
+
+    // Falls keine Startkombination gegeben ist, prüfen wir die erste Kombination
+    if (startCombination === null && isValidCombination(combination)) {
+        return combination;
+    }
+
+    do {
+        decrementCombination(combination, indices);
+        combination = indices.map((index, i) => lists[i][index]);
+
+        let allAtMax = true;
+        for (let i = 0; i < indices.length; i++) {
+            if (indices[i] !== lists[i].length - 1) {
+                allAtMax = false;
+                break;
+            }
+        }
+
+        if (allAtMax) {
+            // Wenn wir wieder bei der letzten Kombination sind, ist keine gültige Kombination verfügbar
+            return null;
+        }
+    } while (!isValidCombination(combination));
+
+    console.log("Load Table successfully");
+
+    return combination;
+}
+
+
 
 function convertDictionaryToNumbersList(dictionary) {
     const timesList = [];
@@ -259,7 +482,7 @@ function saveModuleMenutables() {
             const veranstaltungName = veranstaltungNameElement ? veranstaltungNameElement.textContent.trim() : '';
             if (!veranstaltungName) return;
 
-            //sendMessageToServer(`Veranstaltung: ${veranstaltungName}`);  // Send specific Veranstaltung name
+            //console.log(`Veranstaltung: ${veranstaltungName}`);  // Send specific Veranstaltung name
 
             const subsubmenu = veranstaltungElement.querySelector('.subsubmenu');
             if (!subsubmenu) return;
@@ -277,8 +500,8 @@ function saveModuleMenutables() {
     });
 
     // Save and send data
-    localStorage.setItem("Saved Modules Meta", JSON.stringify(module_meta));
-    sendMessageToServer("Module saved successfully");
+    window.globalSavedModulMeta = module_meta;
+    console.log("Module saved successfully");
 }
 
 function extractMarkedTimesFromTable(table) {
@@ -328,8 +551,8 @@ function loadPrePlanedModules() {
       }
     }
 
-    const sideMenu = document.getElementById('sideMenu');
-    const moduleMenu = sideMenu.querySelector('.moduleMenu');
+    const settingsMenu = document.getElementById('settingsMenu');
+    const moduleMenu = settingsMenu.querySelector('.moduleMenu');
     const submenu = moduleMenu.querySelector('.submenu');
 
     for (let module in prePlanned) {
@@ -354,6 +577,8 @@ function loadPrePlanedModules() {
             }
         }
     }
+
+    settingsMenu.scrollTop = 0;
 }
 
 function addSubMenuItem(submenu, moduleName = 'Modul') {
@@ -529,7 +754,7 @@ function removeMenuItem(button) {
 function filterWithColour() {
     // Holen der Zustände der Tabellenzellen
     const cellStates = getTableCellStates();
-    const lists = loadData('Active Times');
+    const lists = window.globalActiveTimes;
 
     // get all red states später auch die grünen
     let redCells = [];
@@ -545,17 +770,16 @@ function filterWithColour() {
       sublist.filter(value => !redCells.includes(value))
     );
 
-    localStorage.setItem("Active Times", JSON.stringify(filteredLists));
+    window.globalActiveTimes = filteredLists;
 
     calculateTotalNumber();
 
     let TotalNumberlabel = document.getElementById("Number-of-Plans-Display");
-    TotalNumberlabel.innerText = `${loadData('Number of saved Combinations')}`;
+    TotalNumberlabel.innerText = `${window.globalNumberOfSavedCombinations}`;
 
-    const startingCombination = findNextCombination();
-    updateMainTable(startingCombination);
+    createStartingTables();
 
-    sendMessageToServer("Filtered active times. reload to reset");
+    console.log("Filtered active times. reload to reset");
 }
 
 function setCursorColor(color) {
@@ -566,24 +790,39 @@ function setCursorColor(color) {
 function handleTableCellClick(event) {
     const target = event.currentTarget;
 
-    if (target.cellIndex === 0) {
+    col = target.cellIndex;
+    row = target.parentNode.rowIndex;
+
+    if (col === 0) {
         return; // Keine Aktion für Zellen in der ersten Spalte
     }
 
-    // Entfernen von vorherigen Markierungen
     target.classList.remove('green-cell', 'red-cell');
 
-    // Markieren der aktuellen Zelle basierend auf dem Cursor
     if (currentCursorColor === 'green') {
         target.classList.add('green-cell');
     } else if (currentCursorColor === 'red') {
         target.classList.add('red-cell');
     }
+
+    const all_Stundenplan_Tables = document.querySelectorAll('#Stundenplan_Tables-wrapper .StundenplanTable');
+
+    for (let i = 0; i<3; i++) {
+        const cell = all_Stundenplan_Tables[i].rows[row].cells[col];
+
+        cell.classList.remove('green-cell', 'red-cell');
+
+        if (currentCursorColor === 'green') {
+            cell.classList.add('green-cell');
+        } else if (currentCursorColor === 'red') {
+            cell.classList.add('red-cell');
+        }
+    }
 }
 
 function handleOutsideClick(event) {
     // Überprüfen, ob der Klick außerhalb der Tabelle war
-    if (!event.target.closest('#planTable') && !event.target.closest('#sideMenu')) {
+    if (!event.target.closest('.Stundenplantable') && !event.target.closest('#settingsMenu')) {
         resetCursorColor();
     }
 }
@@ -601,9 +840,10 @@ function resetCursorColor() {
 }
 
 function getTableCellStates() {
-    sendMessageToServer("Grüne Felder muss ich erst noch machen.");
+    console.log("Grüne Felder muss ich erst noch machen.");
     const cellStates = [];
-    const rows = Array.from(document.querySelectorAll('#planTable tbody tr'));
+    const all_Stundenplan_Tables = document.querySelectorAll('#Stundenplan_Tables-wrapper .StundenplanTable');
+    const rows = Array.from(all_Stundenplan_Tables[0].querySelectorAll('tbody tr'));
 
     // Annehmen, dass alle Zeilen die gleiche Anzahl an Spalten haben
     const columnCount = rows[0].querySelectorAll('td').length - 1; // -1 weil wir die erste Spalte überspringen
@@ -627,29 +867,11 @@ function getTableCellStates() {
 
 
 function openMenu() {
-  const sideMenu = document.getElementById('sideMenu');
-  const content = document.getElementById('content');
+  const settingsMenu = document.getElementById('settingsMenu');
 
-      if (sideMenu.classList.contains('open')) {
-         sideMenu.classList.remove('open');
-         content.classList.remove('zoomed-out');
+      if (settingsMenu.classList.contains('show')) {
+         settingsMenu.classList.remove('show');
      } else {
-         sideMenu.classList.add('open');
-         content.classList.add('zoomed-out');
+         settingsMenu.classList.add('show');
      }
-}
-
-function sendMessageToServer(message) {
-  setTimeout(() => {
-      fetch('/log', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ message: message })
-    })
-    .then(response => response.json())
-    .then(data => console.log('Server antwortete:', data))
-    .catch(error => console.error('Fehler:', error));
-    }, 0);
 }
